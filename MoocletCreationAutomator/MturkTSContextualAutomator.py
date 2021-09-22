@@ -18,16 +18,16 @@ class MturkTSContextualAutomator:
         return id
 
     def create_versions_object(self, mooclet_id):
-        for arm_no in self.arms_no:
+        for arm_no, value in self.arms_no.items():
             name = f"MTurk TS Survey Arm {arm_no} Round {self.round_no}"
             params = {
                 "mooclet": mooclet_id,
                 "name": name,
                 "text": f"Arm {arm_no}",
-                "version_json": json.dumps({f"is_arm{self.arms_no[0]}_round_{self.round_no}": 1})
+                "version_json": json.dumps({f"is_arm{list(self.arms_no.keys())[0]}_round_{self.round_no}": value})
             }
             self.mooclet.create_version_object(params)
-        return f"is_arm{self.arms_no[0]}_round_{self.round_no}"
+        return f"is_arm{list(self.arms_no.keys())[0]}_round_{self.round_no}"
 
     def create_policy_parameters(self, mooclet_id, policy_dict):
         for policy, info in policy_dict.items():
@@ -104,15 +104,15 @@ class MturkTSContextualAutomator:
 
 
 if __name__ == "__main__":
-    round_no = 100
+    round_no = 101
     # 12 - choose policy group, 6 - ts contextual
     policy_ids = [12, 6]
     # suppose it is study comparing arm 88 vs arm 89
-    arms_no = [88, 89]
+    arms_no = {89: 0, 90: 1}
     # contextuals variables
     contextuals = [f"mood_round_{round_no}", f"energy_round_{round_no}"]
     # regression formula
-    formula = f"mturk_ts_reward_round_{round_no} ~ Intercept + BETA * is_arm{arms_no[0]}_round_{round_no}"
+    formula = f"mturk_ts_reward_round_{round_no} ~ Intercept + BETA * is_arm{list(arms_no.keys())[0]}_round_{round_no}"
     # batch_size
     # batch_size = 5
     automator = MturkTSContextualAutomator(arms_no, policy_ids, round_no)
