@@ -23,7 +23,7 @@ class MturkTSContextualAutomator:
             params = {
                 "mooclet": mooclet_id,
                 "name": name,
-                "text": f"Arm {arm_no}",
+                "text": f"arm {arm_no}",
                 "version_json": json.dumps({f"is_arm{list(self.arms_no.keys())[0]}_round_{self.round_no}": value})
             }
             self.mooclet.create_version_object(params)
@@ -70,6 +70,7 @@ class MturkTSContextualAutomator:
             "variance_a": 2,
             "variance_b": 1,
             "action_space": action_space,
+            "include_intercept": 1,
             "outcome_variable": reward,
             "regression_formula": regression_formula,
             "contextual_variables": contextuals + ["version"]
@@ -85,7 +86,7 @@ class MturkTSContextualAutomator:
             "ts_contextual": self._construct_ts_contextual_dict(regression_formula, arm_json, contextuals, batch_size)
         }
 
-    def __call__(self, regression_formula, contextuals, batch_size=3, ur=0.5, ts_c=0.5):
+    def __call__(self, regression_formula, contextuals, batch_size=3, ur=0.0, ts_c=1.0):
         mooclet_id = self.create_mooclet_object()
         if not mooclet_id:
             return None
@@ -104,15 +105,27 @@ class MturkTSContextualAutomator:
 
 
 if __name__ == "__main__":
-    round_no = 101
+    # round number for MOOClet (make sure you are adding the new round of MOOClet)
+    round_no = 27
+
     # 12 - choose policy group, 6 - ts contextual
     policy_ids = [12, 6]
-    # suppose it is study comparing arm 88 vs arm 89
-    arms_no = {89: 0, 90: 1}
+
+    # suppose it is study comparing arm 5 vs arm 6, and you want to set the version variable to arm5=1 and arm6=0
+    arms_no = {5: 1, 6: 0}
+
     # contextuals variables
-    contextuals = [f"mood_round_{round_no}", f"energy_round_{round_no}"]
+    contextuals = []
+    # contextuals = [f"mood_round_{round_no}", f"energy_round_{round_no}"]
+
     # regression formula
-    formula = f"mturk_ts_reward_round_{round_no} ~ Intercept + BETA * is_arm{list(arms_no.keys())[0]}_round_{round_no}"
+    # NOTE: do not include BETA, INTERCEPT in the formula
+    # formula = {
+    #     "reward_variable": ,
+    #     "In":
+    # }
+    formula = f"mturk_ts_reward_round_{round_no} ~ is_arm{list(arms_no.keys())[0]}_round_{round_no}"
+
     # batch_size
     # batch_size = 5
     automator = MturkTSContextualAutomator(arms_no, policy_ids, round_no)

@@ -9,7 +9,7 @@ def create_coefficient_covariance_and_mean_matrix(length):
     matrix = []
     for i in range(length):
         zeros = [0.0] * length
-        zeros[i] = 1.0
+        zeros[i] = 10.0
         matrix.append(zeros)
     return matrix, [0.0]*length
 
