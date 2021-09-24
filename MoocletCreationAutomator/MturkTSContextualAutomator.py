@@ -73,7 +73,9 @@ class MturkTSContextualAutomator:
             "include_intercept": 1,
             "outcome_variable": reward,
             "regression_formula": regression_formula,
-            "contextual_variables": contextuals + ["version"]
+            "contextual_variables": contextuals + ["version"],
+            "precesion_draw": 1,
+            "coef_draw": 1
         }
         return {
             "id": 6,
@@ -106,7 +108,7 @@ class MturkTSContextualAutomator:
 
 if __name__ == "__main__":
     # round number for MOOClet (make sure you are adding the new round of MOOClet)
-    round_no = 27
+    round_no = 32
 
     # 12 - choose policy group, 6 - ts contextual
     policy_ids = [12, 6]
